@@ -1,7 +1,6 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: monospace;
+p {
+  font-family: verdana;
+  font-size: 20px;
 }
 
 header {
@@ -14,8 +13,8 @@ header {
 }
 
 .container {
-  height: 95vh;
-  display:flex;
+  display: flex; /* or inline-flex */
+  flex-direction: row
 }
 
 pre {

@@ -1,18 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import { createStore } from 'redux';
-import { counter, todoApp } from './redux/reducer';
+import configureStore from './configureStore';
+import Root from './component/Root';
 
-export const store = createStore(counter, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const store = configureStore();
 
-const render = () => {
-  ReactDOM.render(
-    <App />, 
-    document.getElementById('root')
-  );
-}
-
-
-store.subscribe(render);
-render();
+ReactDOM.render(
+  <Root store ={store} />, 
+  document.getElementById('root')
+);
