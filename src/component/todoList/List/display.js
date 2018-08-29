@@ -1,9 +1,40 @@
-import React from 'react';
+import React, {Component} from 'react';
 // import PropType from 'prop-types';
 import {withRouter} from 'react-router';
 import {connect} from 'react-redux';
 import {getVisibleTodos} from '../../../reducers'
-import {toggleTodo} from '../../../actions/index';
+import * as actions from '../../../actions';
+
+import { fetchTodos } from '../../../data';
+
+class VisibleTodoList extends Component {
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.filter !== prevProps.filter) {
+      this.fetchData();
+    }
+  }
+
+  fetchData() {
+    const { filter, receiveTodos } = this.props;
+    fetchTodos(filter).then(todos =>
+      receiveTodos(filter, todos)
+    );
+  }
+
+  render() {
+    const {toggleTodo, ...rest } = this.props
+    return (
+      <TodoList 
+        {...rest} 
+        onTodoClick={toggleTodo} 
+      />
+    )
+  }
+}
 
 
 const Todo = (props) => (
@@ -19,34 +50,34 @@ const Todo = (props) => (
 );
 
 const TodoList = (props) => {
-  console.log('??', props.todos);
   return (
-  <div className="container">
-    <p>LIST</p>
-    <ul>
-      {props.todos.map((todo) =>
-        <Todo
-          key={todo.id}
-          {... todo}
-          onClick={() => props.onTodoClick(todo.id)} 
-        />
-      )}
-    </ul>
-  </div>
-)
+    <div className="container">
+      <p>LIST</p>
+      <ul>
+        {props.todos.map((todo) =>
+          <Todo
+            key={todo.id}
+            {... todo}
+            onClick={() => props.onTodoClick(todo.id)} 
+          />
+        )}
+      </ul>
+    </div>
+  )
 };
 
+const mapStateToProps = (state, { match }) => {
+  const filter = match.params.filter || 'all';
+  return {
+    todos: getVisibleTodos(state, filter),
+    filter
+  }
+};
 
-
-
-const mapStateToProps = (state, { match }) => ({
-  todos: getVisibleTodos(state, match.params.filter || 'all')
-});
-
-const VisibleTodoList = withRouter(connect(
+VisibleTodoList = withRouter(connect(
   mapStateToProps,
-  {onTodoClick: toggleTodo}
-) (TodoList));
+  actions
+) (VisibleTodoList));
 
 
 export default VisibleTodoList;
