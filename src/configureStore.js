@@ -3,6 +3,22 @@ import { todoApp } from './reducers/index';
 import { loadState, saveState } from  './localStorage'; 
 import throttle from 'lodash/throttle';
 
+const addLoggingToDispatch = (store) => {
+  const rawDispatch = store.dispatch;
+  if (!console.group) {
+    return rawDispatch;
+  }
+
+  return (action) => {
+    console.group(action.type);
+    console.log('%c prev state', 'color: gray', store.getState());
+    console.log('%c action', 'color: blue', action);
+    const returnValue = rawDispatch(action);
+    console.log('%c next state', 'color: green');
+    console.groupEnd(action.type);
+    return returnValue;
+  }
+}
 
 const configureStore = () => {
   const presistedState = loadState();
@@ -11,6 +27,8 @@ const configureStore = () => {
     presistedState,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   );
+
+  store.dispatch = addLoggingToDispatch(store);
 
   store.subscribe(throttle(() => {
     saveState({
