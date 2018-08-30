@@ -1,6 +1,7 @@
 import { createStore, applyMiddleware } from 'redux';
 import todos  from './reducers/index';
-import promise from 'redux-promise';
+// import promise from 'redux-promise';
+import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 // import { loadState, saveState } from  './localStorage'; 
 // import throttle from 'lodash/throttle';
@@ -34,9 +35,11 @@ import { createLogger } from 'redux-logger';
 //   );
 // };
 
+
+
 const configureStore = () => {
   // const presistedState = loadState();
-  const middlewares = [promise];
+  const middlewares = [thunk];
 
   if (process.env.NODE_ENV !== 'production') {
     middlewares.push(createLogger());
